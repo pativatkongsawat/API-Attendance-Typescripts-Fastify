@@ -1,17 +1,16 @@
-// src/db.ts
-import mongoose from 'mongoose';
-import config from './config';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 const connectToDB = async (): Promise<void> => {
   try {
-    await mongoose.connect(config.mongoUri, {
-     
-    });
-    console.log('Connected to MongoDB');
+    await prisma.$connect();
+    console.log('✅ Connected to MySQL via Prisma');
   } catch (err: any) {
-    console.error('MongoDB connection error:', err.message);
+    console.error('❌ MySQL connection error:', err.message);
     process.exit(1);
   }
 };
 
+export { prisma };
 export default connectToDB;
