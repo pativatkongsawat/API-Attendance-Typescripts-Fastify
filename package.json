@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/node": "^22.5.4",
     "nodemon": "^3.1.4",
+    "prisma": "^6.9.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
@@ -20,7 +21,6 @@
     "dotenv": "^16.4.5",
     "fastify": "^4.29.1",
     "fastify-cors": "^6.1.0",
-    "mongoose": "^8.6.1",
-    "prisma": "^6.9.0"
+    "mongoose": "^8.6.1"
   }
 }
