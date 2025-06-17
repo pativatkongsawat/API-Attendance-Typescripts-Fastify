@@ -6,7 +6,7 @@ import userRoutes from './routes/userRoutes';
 const buildApp = (options: FastifyServerOptions) => {
   const app = Fastify(options);
 
-  app.register(userRoutes, { prefix: '/users' });
+  app.register(userRoutes, { prefix: 'api/users' });
 
   return app;
 };
@@ -21,7 +21,7 @@ connectToDB().then(() => {
   const startServer = async () => {
     try {
       await app.listen({ port: Number(config.port) });
-      console.log(`🚀 Server running at http://localhost:${config.port}`);
+      console.log(` Server running at http://localhost:${config.port}`);
     } catch (err) {
       console.error(err);
       process.exit(1);

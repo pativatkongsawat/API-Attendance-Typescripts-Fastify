@@ -8,74 +8,120 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model attendances {
-  id          Int                @id @default(autoincrement())
-  course_code String             @db.VarChar(20)
-  user_id     String             @db.VarChar(20)
-  status      attendances_status
-  date        DateTime?          @db.Date
-}
-
 model course_time_slots {
-  id          Int      @id @default(autoincrement())
-  course_code String   @db.VarChar(20)
-  day         String   @db.VarChar(20)
-  start_time  DateTime @db.Time(0)
-  end_time    DateTime @db.Time(0)
-  courses     courses  @relation(fields: [course_code], references: [course_code], onDelete: Cascade, onUpdate: NoAction, map: "course_time_slots_ibfk_1")
+  slot_id    Int       @id @default(autoincrement())
+  course_id  Int
+  day        String    @db.VarChar(20)
+  start_time DateTime  @db.Time(0)
+  end_time   DateTime  @db.Time(0)
+  deleted_at DateTime? @db.DateTime(0)
+  courses    courses   @relation(fields: [course_id], references: [course_id], onDelete: Cascade, onUpdate: NoAction, map: "course_time_slots_ibfk_1")
 
-  @@index([course_code], map: "course_code")
+  @@index([course_id], map: "course_id")
 }
 
 model courses {
-  id                  Int                        @id @default(autoincrement())
-  course_code         String                     @unique(map: "course_code") @db.VarChar(20)
+  course_id           Int                        @id @default(autoincrement())
+  course_code         String                     @unique(map: "course_code") @db.VarChar(50)
   course_name         String                     @db.VarChar(255)
-  instructor_user_id  String                     @db.VarChar(20)
+  instructor_id       Int
   attendance_status   courses_attendance_status? @default(closed)
   seat_limit          Int
   current_enrollments Int?                       @default(0)
+  deleted_at          DateTime?                  @db.DateTime(0)
   created_at          DateTime?                  @default(now()) @db.DateTime(0)
+  updated_at          DateTime?                  @default(now()) @db.DateTime(0)
+  class_sessions      class_sessions[]
   course_time_slots   course_time_slots[]
+  users               users                      @relation(fields: [instructor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "courses_ibfk_1")
+  enrollments         enrollments[]
+
+  @@index([instructor_id], map: "instructor_id")
 }
 
 model enrollments {
-  id          Int       @id @default(autoincrement())
-  course_code String    @db.VarChar(20)
-  user_id     String    @db.VarChar(20)
-  deleted_at  DateTime? @db.DateTime(0)
-  created_at  DateTime? @default(now()) @db.DateTime(0)
+  enrollment_id Int       @id @default(autoincrement())
+  course_id     Int
+  student_id    Int
+  deleted_at    DateTime? @db.DateTime(0)
+  created_at    DateTime? @default(now()) @db.DateTime(0)
+  updated_at    DateTime? @default(now()) @db.DateTime(0)
+  courses       courses   @relation(fields: [course_id], references: [course_id], onDelete: Cascade, onUpdate: NoAction, map: "enrollments_ibfk_1")
+  users         users     @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "enrollments_ibfk_2")
+
+  @@index([course_id], map: "course_id")
+  @@index([student_id, course_id], map: "idx_enroll_lookup")
 }
 
 model roles {
-  id    Int     @id @default(autoincrement())
-  name  String  @unique(map: "name") @db.VarChar(50)
-  users users[]
+  role_id    Int          @id @default(autoincrement())
+  role_name  String       @unique(map: "role_name") @db.VarChar(50)
+  user_roles user_roles[]
 }
 
 model users {
-  id         Int       @id @default(autoincrement())
-  user_id    String    @unique(map: "user_id") @db.VarChar(20)
-  first_name String    @db.VarChar(100)
-  last_name  String    @db.VarChar(100)
-  email      String    @unique(map: "email") @db.VarChar(100)
-  password   String    @db.VarChar(255)
-  department String?   @db.VarChar(100)
-  role_id    Int
-  deleted_at DateTime? @db.DateTime(0)
-  created_at DateTime? @default(now()) @db.DateTime(0)
-  roles      roles     @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
+  id          Int           @id @default(autoincrement())
+  user_id     String        @unique(map: "user_id") @db.VarChar(20)
+  username    String        @unique(map: "username") @db.VarChar(100)
+  email       String        @unique(map: "email") @db.VarChar(255)
+  password    String        @db.VarChar(255)
+  first_name  String        @db.VarChar(100)
+  last_name   String        @db.VarChar(100)
+  department  String?       @db.VarChar(100)
+  is_active   Boolean?      @default(true)
+  deleted_at  DateTime?     @db.DateTime(0)
+  created_at  DateTime?     @default(now()) @db.DateTime(0)
+  updated_at  DateTime?     @default(now()) @db.DateTime(0)
+  attendance  attendance[]
+  courses     courses[]
+  enrollments enrollments[]
+  user_roles  user_roles[]
 
-  @@index([role_id], map: "role_id")
+  @@index([email], map: "idx_user_email")
 }
 
-enum attendances_status {
-  present
-  absent
-  late
+model attendance {
+  attendance_id  Int               @id @default(autoincrement())
+  session_id     Int
+  student_id     Int
+  status         attendance_status
+  note           String?           @db.Text
+  created_at     DateTime?         @default(now()) @db.DateTime(0)
+  class_sessions class_sessions    @relation(fields: [session_id], references: [session_id], onDelete: Cascade, onUpdate: NoAction, map: "attendance_ibfk_1")
+  users          users             @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "attendance_ibfk_2")
+
+  @@index([student_id, session_id], map: "idx_attendance_lookup")
+  @@index([session_id], map: "session_id")
+}
+
+model class_sessions {
+  session_id   Int          @id @default(autoincrement())
+  course_id    Int
+  session_date DateTime     @db.Date
+  start_time   DateTime     @db.Time(0)
+  end_time     DateTime     @db.Time(0)
+  attendance   attendance[]
+  courses      courses      @relation(fields: [course_id], references: [course_id], onDelete: Cascade, onUpdate: NoAction, map: "class_sessions_ibfk_1")
+
+  @@index([course_id, session_date], map: "idx_session_date")
+}
+
+model user_roles {
+  user_id Int
+  role_id Int
+  users   users @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_roles_ibfk_1")
+  roles   roles @relation(fields: [role_id], references: [role_id], onDelete: Cascade, onUpdate: NoAction, map: "user_roles_ibfk_2")
+
+  @@id([user_id, role_id])
+  @@index([role_id], map: "role_id")
 }
 
 enum courses_attendance_status {
   open
   closed
+}
+
+enum attendance_status {
+  present
+  absent
 }
