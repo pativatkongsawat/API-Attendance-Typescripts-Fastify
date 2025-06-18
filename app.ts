@@ -6,7 +6,7 @@ import userRoutes from './routes/userRoutes';
 const buildApp = (options: FastifyServerOptions) => {
   const app = Fastify(options);
 
-  app.register(userRoutes, { prefix: 'api/users' });
+  app.register(userRoutes, { prefix: '/api/users' });
   
 
   return app;

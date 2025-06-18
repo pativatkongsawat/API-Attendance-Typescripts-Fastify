@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.5.4",
     "nodemon": "^3.1.4",
     "prisma": "^6.9.0",

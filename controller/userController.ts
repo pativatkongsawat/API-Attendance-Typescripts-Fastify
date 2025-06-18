@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../server/condb';
-import {bcrypt} from 'bcrypt'
+import bcrypt from 'bcrypt'
 
 export const createUser = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
@@ -13,7 +13,7 @@ export const createUser = async (req: FastifyRequest, reply: FastifyReply) => {
       department: string;
     };
 
-    if (user_id || email || password || first_name || last_name || department == null){
+    if (!user_id || !email || !password || !first_name || !last_name || !department){
 
       return reply.status(400).send({
 
@@ -64,3 +64,61 @@ export const getAllUser = async (req : FastifyRequest , reply : FastifyReply) =>
   }
 
 }
+
+
+export const createUsersArray = async (req: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const users = req.body as {
+      user_id: string;
+      email: string;
+      password: string;
+      first_name: string;
+      last_name: string;
+      department?: string;
+    }[];
+
+    if (!Array.isArray(users) || users.length === 0) {
+      return reply.status(400).send({
+        error: 'ต้องระบุข้อมูลผู้ใช้อย่างน้อยหนึ่งรายการ',
+      });
+    }
+
+    const usersToCreate = await Promise.all(
+      users.map(async (user) => {
+        const { user_id, email, password, first_name, last_name, department } = user;
+
+        if (!user_id || !email || !password || !first_name || !last_name) {
+          return reply.status(400).send({
+            error:"กรอกข้อมูลให้ครบถ้วน"
+          })
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        return {
+          user_id,
+          email,
+          password: hashedPassword,
+          first_name,
+          last_name,
+          department,
+          is_active: true,
+        };
+      })
+    );
+
+    const createdUsers = await prisma.users.createMany({
+      data: usersToCreate,
+      skipDuplicates: true,
+    });
+
+    return reply.status(200).send({
+      message: 'สร้างผู้ใช้สำเร็จ',
+      count: createdUsers.count,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return reply.status(500).send({ error: 'ไม่สามารถเพิ่มผู้ใช้งานได้', detail: error});
+  }
+};
