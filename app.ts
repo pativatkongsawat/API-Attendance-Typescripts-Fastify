@@ -7,6 +7,7 @@ const buildApp = (options: FastifyServerOptions) => {
   const app = Fastify(options);
 
   app.register(userRoutes, { prefix: 'api/users' });
+  
 
   return app;
 };

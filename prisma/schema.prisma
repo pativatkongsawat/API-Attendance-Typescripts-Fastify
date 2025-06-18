@@ -62,7 +62,6 @@ model roles {
 model users {
   id          Int           @id @default(autoincrement())
   user_id     String        @unique(map: "user_id") @db.VarChar(20)
-  username    String        @unique(map: "username") @db.VarChar(100)
   email       String        @unique(map: "email") @db.VarChar(255)
   password    String        @db.VarChar(255)
   first_name  String        @db.VarChar(100)
