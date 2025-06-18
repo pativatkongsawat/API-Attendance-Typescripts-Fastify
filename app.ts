@@ -2,11 +2,13 @@ import Fastify, { FastifyServerOptions } from 'fastify';
 import config from './server/config';
 import connectToDB from './server/condb';
 import userRoutes from './routes/userRoutes';
+import authRoutes from './routes/authRoutes'
 
 const buildApp = (options: FastifyServerOptions) => {
   const app = Fastify(options);
 
   app.register(userRoutes, { prefix: '/api/users' });
+  app.register(authRoutes , {prefix: '/api/auth'})
   
 
   return app;

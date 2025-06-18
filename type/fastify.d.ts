@@ -5,7 +5,7 @@ declare module 'fastify' {
     user?: {
       id: number;
       email: string;
-      role:string[];
+      roles: string[];
     };
   }
 }
