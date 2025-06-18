@@ -9,8 +9,10 @@ export const createUser = async (req: FastifyRequest, reply: FastifyReply) => {
     email: string;
     roles: { id: number; name: string }[];
   };
+  const roleIds = user.roles.map(r => r.id).join(', ');
+  console.log(`[createUser] Request by user ${user.email} (id=${user.id}), roles=[${roleIds}]`);
 
-  if (!user || !user.roles.some(r => r.id === 1 || r.id === 2)) {
+  if (user.roles.some(r => r.id == 3)) {
     return reply.status(403).send({ error: 'คุณไม่มีสิทธิ์เข้าถึง API นี้' });
   }
   try {
@@ -229,3 +231,8 @@ export const softDeleteUsers = async (req: FastifyRequest, reply: FastifyReply) 
       .send({ error: 'ไม่สามารถลบผู้ใช้งานได้', detail: err.message });
   }
 };
+
+
+export const deleteUsers = async(req :FastifyRequest , reply : FastifyReply) => {
+  
+}

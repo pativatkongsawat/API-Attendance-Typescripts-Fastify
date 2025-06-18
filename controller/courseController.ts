@@ -5,7 +5,7 @@ export const getCourseAll = async (req: FastifyRequest, reply: FastifyReply) => 
   try {
     const courses = await prisma.courses.findMany({
       where: {
-        deleted_at: null, 
+        deleted_at: null,
       },
       include: {
         users: {
@@ -18,7 +18,7 @@ export const getCourseAll = async (req: FastifyRequest, reply: FastifyReply) => 
         },
       },
       orderBy: {
-        created_at: "desc", 
+        created_at: "desc",
       },
     });
 
@@ -28,13 +28,30 @@ export const getCourseAll = async (req: FastifyRequest, reply: FastifyReply) => 
       });
     }
 
-    return reply.status(200).send(courses);
+    
+    const result = courses.map((course) => ({
+      course_id: course.course_id,
+      course_code: course.course_code,
+      course_name: course.course_name,
+      attendance_status: course.attendance_status,
+      seat_limit: course.seat_limit,
+      current_enrollments: course.current_enrollments,
+      instructor :{
+            first_name: course.users.first_name,
+            last_name: course.users.last_name,
+            email: course.users.email,
+            department: course.users.department,
+            }
+        })
+    );
+
+    return reply.status(200).send(result);
   } catch (err: any) {
     return reply.status(500).send({
       error: err.message || "เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์",
     });
   }
-}
+};
 
 export const getCourseById = async (req: FastifyRequest, reply: FastifyReply) => {
   const { course_code } = req.query as {
@@ -85,4 +102,22 @@ export const getCourseById = async (req: FastifyRequest, reply: FastifyReply) =>
 
 export const createCourse = async  (req : FastifyRequest , reply :FastifyReply) => {
 
+    const user = (req as any).user as {
+        id:number,
+        user_id:string,
+        email:string,
+        roles: { id: number; name: string }[];
+    }
+
+    if (!user || !user.roles.some(r => r.id === 1 || r.id === 2)) {
+        return reply.status(403).send({ error: 'คุณไม่มีสิทธิ์เข้าถึง API นี้' });
+    }
+
+    try{
+        
+    }catch(err){
+
+    }
+
 }
+
