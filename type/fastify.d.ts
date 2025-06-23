@@ -1,11 +1,11 @@
-import 'fastify';
+// import 'fastify';
 
-declare module 'fastify' {
-  interface FastifyRequest {
-    user?: {
-      id: number;
-      email: string;
-      roles: string[];
-    };
-  }
-}
+// declare module 'fastify' {
+//   interface FastifyRequest {
+//     user?: {
+//       id: number;
+//       email: string;
+//       roles: string[];
+//     };
+//   }
+// }
