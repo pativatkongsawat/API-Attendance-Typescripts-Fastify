@@ -86,6 +86,7 @@ export const createUsersArray = async (
     }
 
     const now = getNow();
+    
 
     const usersToCreate = await Promise.all(
       users.map(async (u) => {
@@ -124,7 +125,7 @@ export const createUsersArray = async (
 
     return reply.status(200).send({
       message: 'สร้างผู้ใช้สำเร็จ',
-      count: createdUsers,
+      user: createdUsers,
     });
   } catch (error) {
     console.error(error);
