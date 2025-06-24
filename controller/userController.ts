@@ -234,5 +234,11 @@ export const softDeleteUsers = async (req: FastifyRequest, reply: FastifyReply) 
 
 
 export const deleteUsers = async(req :FastifyRequest , reply : FastifyReply) => {
+
+  const {user_id} = req.query as {
+
+    user_id : string
+
+  }
   
 }
