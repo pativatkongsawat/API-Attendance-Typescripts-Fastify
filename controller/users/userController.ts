@@ -2,6 +2,8 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../../server/condb';
 import bcrypt from 'bcrypt';
 import { CreateUserInput, UpdateUserInput, CurrentUser } from '../../types/users/user';
+import { hashPassword } from '../../utils/hash';
+import { getNow } from '../../utils/date';
 
 export const createUser = async (
   req: FastifyRequest<{ Body: CreateUserInput }>,
@@ -28,8 +30,8 @@ export const createUser = async (
       return reply.status(409).send({ error: 'มีผู้ใช้งานนี้อยู่แล้ว' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const now = new Date();
+    const hashedPassword = await hashPassword(password);
+    const now = getNow();
 
     const newuser = await prisma.users.create({
       data: {
@@ -84,7 +86,7 @@ export const createUsersArray = async (
       return reply.status(400).send({ error: 'ต้องระบุข้อมูลผู้ใช้อย่างน้อยหนึ่งรายการ' });
     }
 
-    const now = new Date();
+    const now = getNow();
 
     const usersToCreate = await Promise.all(
       users.map(async (user) => {
@@ -94,7 +96,7 @@ export const createUsersArray = async (
           throw new Error('ข้อมูลไม่ครบถ้วน');
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hashPassword(password);
         return {
           user_id,
           email,
