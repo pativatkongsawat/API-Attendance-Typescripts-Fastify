@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { prisma } from '../server/condb';
+import { prisma } from '../../server/condb';
 
 export const getCourseAll = async (req: FastifyRequest, reply: FastifyReply) => {
   try {

@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { prisma } from '../server/condb';
+import { prisma } from '../../server/condb';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
