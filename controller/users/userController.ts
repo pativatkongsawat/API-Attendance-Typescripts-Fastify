@@ -12,8 +12,7 @@ export const createUser = async (
   const body = req.body as CreateUserInput;
   const user = (req as any).user as CurrentUser;
 
-  const roleIds = user.roles.map(r => r.id).join(', ');
-  console.log(`[createUser] by ${user.email}, roles=[${roleIds}]`);
+  
 
   if (user.roles.some(r => r.id === 3)) {
     return reply.status(403).send({ error: 'คุณไม่มีสิทธิ์เข้าถึง API นี้' });
@@ -75,7 +74,7 @@ export const createUsersArray = async (
 ) => {
   const user = (req as any).user as CurrentUser;
 
-  if (!user.roles.some(r => [1, 2].includes(r.id))) {
+  if (user.roles.some(r => r.id === 3)) {
     return reply.status(403).send({ error: 'คุณไม่มีสิทธิ์เข้าถึง API นี้' });
   }
 
@@ -92,7 +91,16 @@ export const createUsersArray = async (
       users.map(async (u) => {
         const { user_id, email, password, first_name, last_name, department } = u;
         if (!user_id || !email || !password || !first_name || !last_name) {
-          throw new Error('ข้อมูลไม่ครบถ้วน');
+          return reply.status(400).send({
+            error: 'ข้อมูลไม่ครบถ้วน',
+            detail: {
+              user_id,
+              email,
+              password: password,
+              first_name,
+              last_name,
+            },
+          });
         }
 
         return {
@@ -116,7 +124,7 @@ export const createUsersArray = async (
 
     return reply.status(200).send({
       message: 'สร้างผู้ใช้สำเร็จ',
-      count: createdUsers.count,
+      count: createdUsers,
     });
   } catch (error) {
     console.error(error);

@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { login } from '../controller/authController';
+import { login } from '../controller/auth/authController';
 import { verifyToken } from '../middleware/authenMiddleware';
 
 export default async function authRoutes(app: FastifyInstance) {
