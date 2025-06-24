@@ -1,7 +1,10 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../../server/condb';
+import { CreateCourseInput} from '../../types/courses/course'
+import {CurrentUser} from '../../types/users/user'
 
-export const getCourseAll = async (req: FastifyRequest, reply: FastifyReply) => {
+export const getCourseAll = async (
+  req: FastifyRequest, reply: FastifyReply) => {
   try {
     const courses = await prisma.courses.findMany({
       where: {
@@ -53,7 +56,8 @@ export const getCourseAll = async (req: FastifyRequest, reply: FastifyReply) => 
   }
 };
 
-export const getCourseById = async (req: FastifyRequest, reply: FastifyReply) => {
+export const getCourseById = async (
+  req: FastifyRequest, reply: FastifyReply) => {
   const { course_code } = req.query as {
     course_code: string;
   };
@@ -100,14 +104,10 @@ export const getCourseById = async (req: FastifyRequest, reply: FastifyReply) =>
   }
 };
 
-export const createCourse = async  (req : FastifyRequest , reply :FastifyReply) => {
+export const createCourse = async  (
+  req : FastifyRequest<{Body :CreateCourseInput[]}> , reply :FastifyReply) => {
 
-    const user = (req as any).user as {
-        id:number,
-        user_id:string,
-        email:string,
-        roles: { id: number; name: string }[];
-    }
+    const user = (req as any).user as CurrentUser
 
     if (!user || !user.roles.some(r => r.id === 1 || r.id === 2)) {
         return reply.status(403).send({ error: 'คุณไม่มีสิทธิ์เข้าถึง API นี้' });
@@ -120,4 +120,5 @@ export const createCourse = async  (req : FastifyRequest , reply :FastifyReply) 
     }
 
 }
+
 

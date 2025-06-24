@@ -1,0 +1,1 @@
+export type CourseAttendanceStatus = 'open' | 'closed';

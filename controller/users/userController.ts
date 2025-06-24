@@ -6,20 +6,21 @@ import { hashPassword } from '../../utils/hash';
 import { getNow } from '../../utils/date';
 
 export const createUser = async (
-  req: FastifyRequest<{ Body: CreateUserInput }>,
+  req: FastifyRequest,
   reply: FastifyReply
 ) => {
+  const body = req.body as CreateUserInput;
   const user = (req as any).user as CurrentUser;
 
   const roleIds = user.roles.map(r => r.id).join(', ');
-  console.log(`[createUser] Request by user ${user.email} (id=${user.id}), roles=[${roleIds}]`);
+  console.log(`[createUser] by ${user.email}, roles=[${roleIds}]`);
 
   if (user.roles.some(r => r.id === 3)) {
     return reply.status(403).send({ error: 'คุณไม่มีสิทธิ์เข้าถึง API นี้' });
   }
 
   try {
-    const { user_id, email, password, first_name, last_name, department } = req.body;
+    const { user_id, email, password, first_name, last_name, department } = body;
 
     if (!user_id || !email || !password || !first_name || !last_name || !department) {
       return reply.status(400).send({ error: 'กรุณาใส่ข้อมูลให้ครบ' });
@@ -49,7 +50,6 @@ export const createUser = async (
     });
 
     return reply.status(200).send(newuser);
-
   } catch (error) {
     console.error(error);
     return reply.status(500).send({ error: 'ไม่สามารถเพิ่มผู้ใช้งานได้' });
@@ -70,17 +70,17 @@ export const getAllUser = async (
 };
 
 export const createUsersArray = async (
-  req: FastifyRequest<{ Body: CreateUserInput[] }>,
+  req: FastifyRequest,
   reply: FastifyReply
 ) => {
   const user = (req as any).user as CurrentUser;
 
-  if (!user || !user.roles.some(r => [1, 2].includes(r.id))) {
+  if (!user.roles.some(r => [1, 2].includes(r.id))) {
     return reply.status(403).send({ error: 'คุณไม่มีสิทธิ์เข้าถึง API นี้' });
   }
 
   try {
-    const users = req.body;
+    const users = req.body as CreateUserInput[];
 
     if (!Array.isArray(users) || users.length === 0) {
       return reply.status(400).send({ error: 'ต้องระบุข้อมูลผู้ใช้อย่างน้อยหนึ่งรายการ' });
@@ -89,18 +89,16 @@ export const createUsersArray = async (
     const now = getNow();
 
     const usersToCreate = await Promise.all(
-      users.map(async (user) => {
-        const { user_id, email, password, first_name, last_name, department } = user;
-
+      users.map(async (u) => {
+        const { user_id, email, password, first_name, last_name, department } = u;
         if (!user_id || !email || !password || !first_name || !last_name) {
           throw new Error('ข้อมูลไม่ครบถ้วน');
         }
 
-        const hashedPassword = await hashPassword(password);
         return {
           user_id,
           email,
-          password: hashedPassword,
+          password: await hashPassword(password),
           first_name,
           last_name,
           department,
@@ -120,7 +118,6 @@ export const createUsersArray = async (
       message: 'สร้างผู้ใช้สำเร็จ',
       count: createdUsers.count,
     });
-
   } catch (error) {
     console.error(error);
     return reply.status(500).send({ error: 'ไม่สามารถเพิ่มผู้ใช้งานได้', detail: error });
@@ -128,12 +125,12 @@ export const createUsersArray = async (
 };
 
 export const updateUsers = async (
-  req: FastifyRequest<{ Querystring: { user_id: string }; Body: UpdateUserInput }>,
+  req: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { user_id } = req.query;
-    const { email, password, first_name, last_name, department, is_active } = req.body;
+    const { user_id } = req.query as { user_id: string };
+    const { email, password, first_name, last_name, department, is_active } = req.body as UpdateUserInput;
 
     if (!user_id) {
       return reply.status(400).send({ error: 'ต้องระบุ user_id' });
@@ -159,12 +156,12 @@ export const updateUsers = async (
         is_active: true,
         created_at: true,
         updated_at: true,
-      }
+      },
     });
 
     return reply.status(200).send({
       message: 'อัปเดตผู้ใช้งานสำเร็จ',
-      user: updated
+      user: updated,
     });
   } catch (err: any) {
     console.error(err);
@@ -173,12 +170,11 @@ export const updateUsers = async (
 };
 
 export const softDeleteUsers = async (
-  req: FastifyRequest<{ Querystring: { user_id: string } }>,
+  req: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { user_id } = req.query;
-
+    const { user_id } = req.query as { user_id: string };
     if (!user_id) {
       return reply.status(400).send({ error: 'ต้องระบุ user_id' });
     }
@@ -197,26 +193,6 @@ export const softDeleteUsers = async (
       message: 'ลบผู้ใช้งาน (soft delete) สำเร็จ',
       deleted_at: now,
     });
-  } catch (err: any) {
-    console.error(err);
-    return reply.status(500).send({ error: 'ไม่สามารถลบผู้ใช้งานได้', detail: err.message });
-  }
-};
-
-export const deleteUsers = async (
-  req: FastifyRequest<{ Querystring: { user_id: string } }>,
-  reply: FastifyReply
-) => {
-  try {
-    const { user_id } = req.query;
-
-    if (!user_id) {
-      return reply.status(400).send({ error: 'ต้องระบุ user_id' });
-    }
-
-    await prisma.users.delete({ where: { user_id } });
-
-    return reply.status(200).send({ message: 'ลบผู้ใช้งานถาวรสำเร็จ' });
   } catch (err: any) {
     console.error(err);
     return reply.status(500).send({ error: 'ไม่สามารถลบผู้ใช้งานได้', detail: err.message });
