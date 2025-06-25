@@ -1,4 +1,4 @@
-# Attendance API (Fastify.Ts)
+## Attendance API (Fastify.Ts)
 
 A backend system for managing attendance, built with TypeScript and Fastify.
 
@@ -11,3 +11,13 @@ A backend system for managing attendance, built with TypeScript and Fastify.
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="image/jwt.png" width="120" />
 </p>
+
+
+## Technology Stack
+
+- Language: TypeScripts
+- Framework: Fastify
+- Database: MySQL 
+- ORM: Prisma
+- Authentication: JWT
+- Containerization: Docker & Docker Compose
