@@ -105,35 +105,73 @@ export const getCourseById = async (
   }
 };
 
-export const createCourse = async  (
-  req : FastifyRequest<{Body :CreateCourseInput}> , reply :FastifyReply) => {
+export const createCourse = async (
+  req: FastifyRequest<{ Body: CreateCourseInput }>,
+  reply: FastifyReply
+) => {
+  const user = (req as any).user as CurrentUser;
 
-    const user = (req as any).user as CurrentUser
-
-   if(user.roles.some(r => r.id === 3)){
-
+  if (user.roles.some((r) => r.id === 3)) {
     return reply.status(403).send({
-      error : "คุณไม่มีสิทธิเข้าถึง API นี้"
-    })
+      error: 'คุณไม่มีสิทธิเข้าถึง API นี้',
+    });
+  }
 
-   }
+  try {
+    const { course_code, course_name, seat_limit, time_slots } = req.body;
 
-    try{
-
-      const {course_code , course_name ,seat_limit } = req.body as CreateCourseInput
-      const user = (req as any).user as CurrentUser;
-
-      if (!course_code || !course_name || !seat_limit){
-        return reply.status(400).send({
-          error : "ใส่ข้อมูลให้ครบถ้วน"
-        })
-      }
-      
-        
-    }catch(err){
-
+    if (!course_code || !course_name || !seat_limit) {
+      return reply.status(400).send({
+        error: 'ใส่ข้อมูลให้ครบถ้วน',
+      });
     }
 
-}
+    if (!time_slots || time_slots.length === 0) {
+      return reply.status(400).send({
+        error: 'ต้องใส่เวลาเรียนอย่างน้อย 1 รายการ',
+      });
+    }
+
+    const saveCourse = await prisma.courses.create({
+      data: {
+        course_code,
+        course_name,
+        instructor_id: user.id,
+        seat_limit,
+        current_enrollments: 0,
+        attendance_status :"closed"
+      },
+    });
+
+    // const slotdata = time_slots.map((slot) => ({
+    //   course_id: saveCourse.course_id,
+    //   day: slot.day,
+    //   start_time: new Date(`1970-01-01T${slot.start_time}Z`),
+    //   end_time: new Date(`1970-01-01T${slot.end_time}Z`),
+    // }));
+
+    const slotdata = time_slots.map((slot) => ({
+      course_id : saveCourse.course_id,
+      day : slot.day,
+      start_time : new Date(`1970-01-01T${slot.start_time}Z`),
+      end_time: new Date(`1970-01-01T${slot.end_time}Z`),
+    }));
+
+    await prisma.course_time_slots.createMany({
+      data: slotdata,
+    });
+
+    return reply.status(201).send({
+      message: 'สร้างคอร์สและเวลาเรียนสำเร็จ',
+      course: saveCourse,
+    });
+  } catch (err) {
+    console.error(err);
+    return reply.status(500).send({
+      error: 'เกิดข้อผิดพลาดในการสร้างคอร์ส',
+    });
+  }
+};
+
 
 

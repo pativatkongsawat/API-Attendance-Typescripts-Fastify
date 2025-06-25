@@ -48,6 +48,7 @@ export const login = async (req: FastifyRequest, reply: FastifyReply) => {
       token,
       user: {
         id: user.id,
+        user_id:user.user_id,
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
