@@ -3,7 +3,7 @@
 A backend system for managing attendance, built with TypeScript and Fastify.
 
 <p align="center">
-  <img src="image/ty.png" width="160" />
+  <img src="image/ty.png" width="140" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="image/fast.png" width="160" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -12,6 +12,8 @@ A backend system for managing attendance, built with TypeScript and Fastify.
   <img src="image/docker.png" width="160" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="image/jwt.png" width="120" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="image/post.png" width="120" />
 </p>
 
 
