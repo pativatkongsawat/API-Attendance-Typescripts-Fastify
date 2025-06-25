@@ -9,5 +9,5 @@ A backend system for managing attendance, built with TypeScript and Fastify.
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="image/docker.png" width="160" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="image/jwt.png" width="160" />
+  <img src="image/jwt.png" width="120" />
 </p>
