@@ -2,17 +2,17 @@ import { FastifyInstance } from 'fastify';
 import { verifyToken } from '../middleware/authenMiddleware';
 import {getCourseAll ,
         getCourseById,
-        createCourse,
-        deleteCourse,
-        softDeleteCourse   
+        createCourseHandler,
+        deleteCourseHandler, 
+        softDeleteCourseHandler 
 } from '../controller/courses/courseController'
 
 export default async function courseRoutes(app : FastifyInstance){
 
     app.get('/' , {preHandler : verifyToken} , getCourseAll )
     app.get('/by' , {preHandler : verifyToken} , getCourseById)
-    app.post('/' , {preHandler : verifyToken} , createCourse)
-    app.put('/s' , {preHandler : verifyToken} , softDeleteCourse)
-    app.delete('/' , {preHandler : verifyToken} , deleteCourse)
+    app.post('/' , {preHandler : verifyToken} , createCourseHandler)
+    app.put('/s' , {preHandler : verifyToken} , softDeleteCourseHandler)
+    app.delete('/' , {preHandler : verifyToken} , deleteCourseHandler)
     
 }
