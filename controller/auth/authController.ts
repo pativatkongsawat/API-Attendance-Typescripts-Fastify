@@ -35,6 +35,7 @@ export const login = async (req: FastifyRequest, reply: FastifyReply) => {
     const token = jwt.sign(
       {
         id: user.id,
+        user_id : user.user_id,
         email: user.email,
         roles: user.user_roles?.map((r) => r.roles.role_name) || [],
       },
