@@ -25,3 +25,4 @@ A backend system for managing attendance, built with TypeScript and Fastify.
 - ORM: Prisma
 - Authentication: JWT
 - Containerization: Docker & Docker Compose
+- API Documentation: Postman
