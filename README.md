@@ -26,3 +26,5 @@ A backend system for managing attendance, built with TypeScript and Fastify.
 - Authentication: JWT
 - Containerization: Docker & Docker Compose
 - API Documentation: Postman
+
+![ER Diagram](image/att_ER.png)
