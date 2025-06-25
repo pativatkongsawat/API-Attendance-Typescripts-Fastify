@@ -3,9 +3,9 @@
 A backend system for managing attendance, built with TypeScript and Fastify.
 
 <p align="center">
-  <img src="image/ty.png" width="100" />
+  <img src="image/ty.png" width="85" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="image/fast.png" width="100" />
+  <img src="image/fast.png" width="120" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="image/mysql.png" width="100" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
