@@ -53,6 +53,11 @@ export const createCourse = async (
       attendance_status: "closed",
     },
   });
+  
+  if (!time_slots || time_slots.length === 0) {
+  throw new Error('time_slots ต้องมีอย่างน้อย 1 รายการ');
+}
+
 
   const slotData = time_slots.map(slot => ({
     course_id: savedCourse.course_id,
