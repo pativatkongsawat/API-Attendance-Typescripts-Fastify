@@ -24,6 +24,8 @@ A backend system for managing attendance, built with TypeScript and Fastify.
 - Database: MySQL 
 - ORM: Prisma
 - Authentication: JWT
+- Architecture: Microservice
+- API Communication: RESTful API
 - Containerization: Docker & Docker Compose
 - API Documentation: Postman , Swagger
 
