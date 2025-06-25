@@ -10,6 +10,9 @@ import {getCourseAll ,
 export default async function courseRoutes(app : FastifyInstance){
 
     app.get('/' , {preHandler : verifyToken} , getCourseAll )
-    app.get('/' , {preHandler : verifyToken} , getCourseById)
+    app.get('/by' , {preHandler : verifyToken} , getCourseById)
+    app.post('/' , {preHandler : verifyToken} , createCourse)
+    app.put('/s' , {preHandler : verifyToken} , softDeleteCourse)
+    app.delete('/' , {preHandler : verifyToken} , deleteCourse)
     
 }

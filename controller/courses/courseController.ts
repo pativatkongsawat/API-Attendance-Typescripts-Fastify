@@ -107,7 +107,7 @@ export const getCourseById = async (
 };
 
 export const createCourse = async (
-  req: FastifyRequest<{ Body: CreateCourseInput }>,
+  req: FastifyRequest,
   reply: FastifyReply
 ) => {
   const user = (req as any).user as CurrentUser;
@@ -119,7 +119,7 @@ export const createCourse = async (
   }
 
   try {
-    const { course_code, course_name, seat_limit, time_slots } = req.body;
+    const { course_code, course_name, seat_limit, time_slots } = req.body as CreateCourseInput ;
 
     if (!course_code || !course_name || !seat_limit) {
       return reply.status(400).send({
