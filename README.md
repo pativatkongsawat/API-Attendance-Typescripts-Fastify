@@ -3,7 +3,7 @@
 A backend system for managing attendance, built with TypeScript and Fastify.
 
 <p align="center">
-  <img src="image/go.png" alt="Go" width="60" style="margin: 0 10px;" />
+  <img src="image/gin.png" alt="Go" width="60" style="margin: 0 10px;" />
   <img src="image/mysql.png" alt="MySQL" width="60" style="margin: 0 10px;" />
   <img src="image/docker.png" alt="Docker" width="60" style="margin: 0 10px;" />
 </p>
