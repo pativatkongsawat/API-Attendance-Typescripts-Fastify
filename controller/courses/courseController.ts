@@ -2,7 +2,8 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../../server/condb';
 import { CreateCourseInput} from '../../types/courses/course'
 import {CurrentUser} from '../../types/users/user'
-import { error } from 'console';
+import { count, error } from 'console';
+import { getNow } from '../../utils/date';
 
 export const getCourseAll = async (
   req: FastifyRequest, reply: FastifyReply) => {
@@ -173,5 +174,102 @@ export const createCourse = async (
   }
 };
 
+export const deleteCourse = async (
+  req: FastifyRequest,
+  reply: FastifyReply
+) => {
+  try {
+    const { course_id } = req.query as { course_id: number };
+
+    if (!course_id) {
+      return reply.status(400).send({
+        error: 'กรุณาระบุ course_id',
+      });
+    }
+
+    
+    const foundCourse = await prisma.courses.findUnique({
+      where: { course_id },
+    });
+
+    if (!foundCourse) {
+      return reply.status(404).send({
+        error: 'ไม่พบคอร์สที่ต้องการลบ',
+      });
+    }
 
 
+    const result = await prisma.$transaction(async (tx) => {
+      await tx.course_time_slots.deleteMany({
+        where: { course_id },
+      });
+
+      const delcourse = await tx.courses.delete({
+        where: { course_id },
+      });
+
+      return delcourse;
+    });
+
+    return reply.status(200).send({
+      message: 'ลบคอร์สสำเร็จ',
+      course: result,
+    });
+  } catch (err: any) {
+   
+    
+
+    console.error(err);
+    return reply.status(500).send({
+      error: 'เกิดข้อผิดพลาดในระบบ',
+    });
+  }
+};
+
+
+export const softDeleteCourse = async (
+  req: FastifyRequest,
+  reply: FastifyReply
+) => {
+  const now = getNow();
+
+  try {
+    const { course_id } = req.query as { course_id: number };
+
+    if (!course_id) {
+      return reply.status(400).send({
+        error: 'กรุณาระบุคอร์สไอดี',
+      });
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      const delcourse = await tx.courses.update({
+        where: { course_id },
+        data: {
+          updated_at: now,
+          deleted_at: now,
+        },
+      });
+
+      await tx.course_time_slots.updateMany({
+        where: { course_id },
+        data: {
+          deleted_at: now,
+        },
+      });
+
+      return delcourse;
+    });
+
+    return reply.status(200).send({
+      message: 'ลบคอร์ส (soft delete) สำเร็จ',
+      course: result,
+    });
+  } catch (err: any) {
+    console.error(err);
+    return reply.status(500).send({
+      error: 'เกิดข้อผิดพลาดในระบบ',
+      detail: err.message,
+    });
+  }
+};
