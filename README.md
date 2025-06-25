@@ -13,7 +13,7 @@ A backend system for managing attendance, built with TypeScript and Fastify.
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="image/jwt.png" width="80" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="image/post.png" width="100" />
+  <img src="image/post.png" width="80" />
 </p>
 
 
