@@ -3,15 +3,17 @@
 A backend system for managing attendance, built with TypeScript and Fastify.
 
 <p align="center">
-  <img src="image/ty.png" width="160" />
+  <img src="image/ty.png" width="100" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="image/fast.png" width="160" />
+  <img src="image/fast.png" width="100" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="image/mysql.png" width="160" />
+  <img src="image/mysql.png" width="100" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="image/docker.png" width="160" />
+  <img src="image/docker.png" width="100" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="image/jwt.png" width="120" />
+  <img src="image/jwt.png" width="80" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="image/post.png" width="100" />
 </p>
 
 
@@ -23,3 +25,6 @@ A backend system for managing attendance, built with TypeScript and Fastify.
 - ORM: Prisma
 - Authentication: JWT
 - Containerization: Docker & Docker Compose
+- API Documentation: Postman
+
+![ER Diagram](image/att_ER.png)
