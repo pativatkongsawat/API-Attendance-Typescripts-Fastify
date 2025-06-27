@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: fastify-app
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: golfpativat719
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: attendance_system
+      JWT_SECRET: "wBf5qT9z@C#G&E)J-Md2PgU$dR@N*7L!"
+      DATABASE_URL: mysql://root:golfpativat719@db:3306/attendance_system
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: npm run dev  
+    working_dir: /app
+
+  db:
+    container_name: mysql-db
+    image: mysql:8
+    restart: unless-stopped
+    ports:
+      - "3310:3306"  
+    environment:
+      MYSQL_ROOT_PASSWORD: golfpativat719
+      MYSQL_DATABASE: attendance_system
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  dbdata:
