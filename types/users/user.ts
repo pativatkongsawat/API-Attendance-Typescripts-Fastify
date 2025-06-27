@@ -19,5 +19,6 @@ export interface UpdateUserInput {
 export interface CurrentUser {
   id: number;
   email: string;
+  user_id :string
   roles: { id: number; name: string }[];
 }
